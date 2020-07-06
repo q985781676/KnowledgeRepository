@@ -1,0 +1,14 @@
+#开发环境
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: repository-gateway
+
+server:
+  port: 10086
+
+
+

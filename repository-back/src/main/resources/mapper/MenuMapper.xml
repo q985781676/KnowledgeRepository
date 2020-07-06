@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zxy.repository.back.mapper.MenuMapper">
+  <resultMap id="BaseResultMap" type="org.zxy.repository.back.entity.Menu">
+    <!--@mbg.generated-->
+    <!--@Table sys_menu-->
+    <id column="menu_id" jdbcType="INTEGER" property="menuId" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="desc" jdbcType="VARCHAR" property="desc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    menu_id, url, code, `desc`
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from sys_menu
+    where menu_id = #{menuId,jdbcType=INTEGER}
+  </select>
+
+
+    <select id="selectAllInMenuId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from sys_menu
+        <if test="list != null and list.size() != 0">
+            where menu_id in
+            <foreach collection="list" item="item" separator=",">
+                (#{item.menuId,jdbcType=INTEGER})
+            </foreach>
+        </if>
+    </select>
+
+    <select id="seletAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from sys_menu
+    </select>
+</mapper>

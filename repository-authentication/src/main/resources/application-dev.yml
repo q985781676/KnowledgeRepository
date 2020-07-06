@@ -1,0 +1,23 @@
+#开发环境
+spring:
+  datasource:
+    username: root
+    password: root03456
+    url: jdbc:mysql://118.31.2.220:3306/knowledge?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: repository-authentication
+
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  port: 7000
+  servlet:
+    context-path: /auth

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zxy.repository.front.mapper.ItemMapper">
+    <resultMap id="BaseResultMap" type="org.zxy.repository.front.entity.Item">
+        <!--@mbg.generated-->
+        <!--@Table kb_item-->
+        <id column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="surface" jdbcType="VARCHAR" property="surface"/>
+        <result column="tag" jdbcType="INTEGER" property="tag"/>
+        <result column="publish_time" jdbcType="TIMESTAMP" property="publishTime"/>
+        <result column="column_id" jdbcType="INTEGER" property="column.columnId"/>
+        <association property="user" column="user_id"
+                     select="org.zxy.repository.front.mapper.UserMapper.selectByPrimaryKey">
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        item_id, title, content, surface, tag, publish_time, user_id, column_id
+    </sql>
+    <insert id="insertSelective" keyColumn="item_id" keyProperty="itemId"
+            parameterType="org.zxy.repository.front.entity.Item" useGeneratedKeys="true">
+        insert into kb_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="surface != null">
+                surface,
+            </if>
+            <if test="tag != null">
+                tag,
+            </if>
+            <if test="publishTime != null">
+                publish_time,
+            </if>
+            <if test="user.userId != null">
+                user_id,
+            </if>
+            <if test="column.columnId != null">
+                column_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="surface != null">
+                #{surface,jdbcType=VARCHAR},
+            </if>
+            <if test="tag != null">
+                #{tag,jdbcType=VARCHAR},
+            </if>
+            <if test="publishTime != null">
+                #{publishTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="user.userId != null">
+                #{user.userId,jdbcType=INTEGER},
+            </if>
+            <if test="column.columnId != null">
+                #{column.columnId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectOrderByPublishTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        ,(SELECT COUNT(*) FROM kb_comment c WHERE c.item_id = i.item_id) commentNum
+                from kb_item i
+        <if test="columnId != null">
+            where column_id = #{columnId,jdbcType=INTEGER}
+        </if>
+        order by publish_time desc
+    </select>
+
+    <select id="selectOrderByCommentNum" resultMap="BaseResultMap">
+        SELECT *,
+               (SELECT COUNT(*) FROM kb_comment c WHERE c.item_id = i.item_id) commentNum
+        FROM kb_item i
+        <if test="columnId != null">
+            where column_id = #{columnId,jdbcType=INTEGER}
+        </if>
+        ORDER BY commentNum DESC
+    </select>
+
+    <resultMap id="DetailResultMap" type="org.zxy.repository.front.entity.Item">
+        <!--@mbg.generated-->
+        <!--@Table kb_item-->
+        <id column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="surface" jdbcType="VARCHAR" property="surface"/>
+        <result column="tag" jdbcType="INTEGER" property="tag"/>
+        <result column="publish_time" jdbcType="TIMESTAMP" property="publishTime"/>
+        <result column="column_id" jdbcType="INTEGER" property="column.columnId"/>
+        <association property="user" column="user_id"
+                     select="org.zxy.repository.front.mapper.UserMapper.selectByPrimaryKey">
+        </association>
+        <collection property="comments" ofType="org.zxy.repository.front.entity.Comment">
+            <id column="id" jdbcType="INTEGER" property="id"/>
+            <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+            <result column="publish_time" jdbcType="TIMESTAMP" property="publishTime"/>
+            <result column="content" jdbcType="VARCHAR" property="content"/>
+            <association property="user" column="user_id"
+                         select="org.zxy.repository.front.mapper.UserMapper.selectByPrimaryKey">
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="selectItemDetailByItemId" resultMap="DetailResultMap">
+        select ki.*, kc.*
+        from kb_item ki
+                     left join kb_comment kc on ki.item_id = kc.item_id
+        where ki.item_id = #{columnId,jdbcType=INTEGER}
+    </select>
+</mapper>
